@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+/*
+
+Use the following command to generate Go source code:
+
+    protoc --go_out=plugins=grpc:. addr.proto
+
+*/
+
+package addr;
+import "google/protobuf/empty.proto";
+
+service Addr {
+  rpc GetAddr(google.protobuf.Empty) returns (AddrReply) {};
+}
+
+message AddrReply {
+  string addr = 1;
+}

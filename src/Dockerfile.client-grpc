@@ -1,0 +1,25 @@
+#======================================#
+# builder env
+#
+
+FROM golang:1.14.1 AS builder
+LABEL author="william.pjyeh@gmail.com"
+
+WORKDIR /go/src/app
+COPY .  .
+RUN GOOS=linux   GOARCH=amd64  CGO_ENABLED=0 \
+    go build -o client-grpc  client-grpc.go
+
+
+#======================================#
+# deployment env
+#
+
+FROM alpine:3.11.3
+LABEL author="william.pjyeh@gmail.com"
+
+# copy executable
+COPY --from=builder /go/src/app/client-grpc  /
+
+# Define default command.
+ENTRYPOINT ["/client-grpc"]

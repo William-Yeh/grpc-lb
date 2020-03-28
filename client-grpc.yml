@@ -1,0 +1,44 @@
+---
+#
+# addr-client-grpc acts as a headless service
+#
+apiVersion: v1
+kind: Service
+metadata:
+  name: addr-client-grpc
+  labels:
+    app: addr-client-grpc
+spec:
+  clusterIP: None
+  selector:
+    app: addr-client-grpc
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: addr-client-grpc
+  labels:
+    app: addr-client-grpc
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: addr-client-grpc
+  #strategy:
+  #  rollingUpdate:
+  #    maxSurge: 1
+  #    maxUnavailable: 1
+  #  type: RollingUpdate
+
+  template:   # pod definition
+    metadata:
+      labels:
+        app: addr-client-grpc
+    spec:
+      containers:
+        - name: addr-client-grpc
+          image: addr-client-grpc
+          imagePullPolicy: IfNotPresent
+          args: ["addr-server:30051"]

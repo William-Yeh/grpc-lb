@@ -1,0 +1,19 @@
+apiVersion: skaffold/v2alpha3
+kind: Config
+build:
+  artifacts:
+    - image: addr-server
+      context: src
+      docker:
+        dockerfile: Dockerfile
+
+    - image: addr-client-grpc
+      context: src
+      docker:
+        dockerfile: Dockerfile.client-grpc
+
+deploy:
+  kubectl:
+    manifests:
+      - server.yml
+      #- client-grpc.yml
