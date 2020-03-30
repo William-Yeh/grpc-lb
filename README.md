@@ -25,17 +25,18 @@ Build the native binaries:
 
 The following binaries will be generated in the `out` directory:
 
-```
-client-grpc
-client-http
-server
-```
+- **server**: sends its IP address back to HTTP and gRPC clients.
+
+- **client-http**: connects to server via HTTP.
+
+- **client-grpc**: connects to server via gRPC.
+
 
 ### Run
 
-Arrange your terminal as follows:
+Arrange your terminal as follows for better experience:
 
-![Native clients and native server](demo-native.png)
+![Fig 1. Native clients and native server](demo-native.png)
 
 
 **Pane A**
@@ -87,7 +88,7 @@ skaffold build
 
 ### Run without gRPC load balancing
 
-Run server in `grpc-lb` namespace:
+Run server (only one pod) in `grpc-lb` namespace:
 
 ```bash
 skaffold dev  -n grpc-lb
@@ -110,18 +111,20 @@ Run native client-grpc:
 out/client-grpc  localhost:30051
 ```
 
-![Native clients, and one server pod in K8s](demo-k8s-1.png)
+You can see the IP address of the single server pod is 10.1.0.8:
+![Fig 2. Native clients, and one server pod in K8s](demo-k8s-1.png)
 
 
-Scale the server to 5 pods:
+
+Now, scale the server to 5 pods:
 
 ```bash
 kubectl scale -n grpc-lb --replicas=5 deployment/addr-server
 ```
 
-You can see that only one gRPC server pod (10.1.0.8) is being connected to and serving the same client-grpc instance.
+You can see that only one of the gRPC server pods is being connected to and serving the same client-grpc instance:
 
-![Native clients, and 5 server pods in K8s](demo-k8s-2.png)
+![Fig 3. Native clients, and 5 server pods in K8s](demo-k8s-2.png)
 
 
 ## Demo in Kubernetes + service mesh
@@ -150,6 +153,12 @@ Create a new namespace `grpc-lb` with Linkerd injected:
 kubectl apply -f ns.yml
 ```
 
+Check data plane again, if necessary:
+
+```bash
+linkerd -n grpc-lb check --proxy
+```
+
 
 ### Run with gRPC load balancing
 
@@ -172,7 +181,7 @@ out/client-grpc  localhost:30051
 ```
 
 Make sure you have run these commands as follows:
-![Native client. One mesh client and one server pod in K8s](demo-mesh-1.png)
+![Fig 4. Native client. One mesh client and one server pod in K8s](demo-mesh-1.png)
 
 Wait for the whole clients and server becoming stable.
 
@@ -183,7 +192,7 @@ kubectl scale -n grpc-lb --replicas=5 deployment/addr-server
 ```
 
 You can see that all gRPC server pods (10.1.0.71 -- 10.1.0.75) take turns in serving the same client instance within the same `grpc-lb` namespace.
-![Native client. One mesh client and 5 server pods in K8s](demo-mesh-2.png)
+![Fig 5. Native client. One mesh client and 5 server pods in K8s](demo-mesh-2.png)
 
 
 View Linkerd dashboard:
@@ -193,8 +202,8 @@ linkerd dashboard &
 ```
 
 You can see the topology of native client-grpc, meshed client-grpc and meshed server:
-![](dashboard-1.png)
+![Fig 6. Topology](dashboard-1.png)
 
 
 You can also see that all gRPC server pods take turns in serving the same client instance within the same `grpc-lb` namespace.
-![](dashboard-2.png)
+![Fig 7. gRPC load balancing effects](dashboard-2.png)
