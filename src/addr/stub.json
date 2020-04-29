@@ -1,0 +1,12 @@
+{
+    "service": "Addr",
+    "method":  "GetAddr",
+    "input": {
+        "equals": {}
+    },
+    "output": {
+        "data": {
+            "addr": "8.8.8.8"
+        }
+    }
+}
